@@ -15,7 +15,8 @@ pub async fn create_route(project_id: &str) -> Router {
     Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/hc", get(health_check::hc_server))
-        .route("/hc_db", get(health_check::hc_db))
+        .route("/hc_db_r", get(health_check::hc_db_r))
+        .route("/hc_db_w", get(health_check::hc_db_w))
         .layer(cors)
         .with_state(app_state)
 }
