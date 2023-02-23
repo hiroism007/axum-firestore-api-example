@@ -1,8 +1,9 @@
-use crate::{app_state::AppState, database::firestore::initialize_db};
+use crate::{app_state::AppState, controller::*, database::firestore::initialize_db};
 use axum::{routing::get, Router};
 use hyper::Method;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
+
 pub async fn create_route(project_id: &str) -> Router {
     let db = initialize_db(project_id.to_string()).await;
     let app_state = Arc::new(AppState { db });
@@ -13,6 +14,7 @@ pub async fn create_route(project_id: &str) -> Router {
 
     Router::new()
         .route("/", get(|| async { "Hello, World!" }))
+        .route("/hc", get(health_check::hc_server))
         .layer(cors)
         .with_state(app_state)
 }
