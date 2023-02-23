@@ -1,11 +1,8 @@
 use crate::app_state::AppState;
 use crate::entity::test::Test;
 use crate::utility::app_error::AppError;
-use axum::{
-    extract::State,
-    response::{IntoResponse, Response},
-};
-use chrono::{DateTime, Utc};
+use axum::{extract::State, response::IntoResponse, Json};
+use chrono::Utc;
 use hyper::StatusCode;
 use std::{env, sync::Arc};
 
@@ -18,9 +15,10 @@ pub async fn hc_db(State(state): State<Arc<AppState>>) -> Result<impl IntoRespon
     let db = state.db.clone();
 
     let test = Test {
-        id: Some("hige".to_string()),
-        name: "hige".to_string(),
-        created_at: Some(DateTime::from(Utc::now())),
+        id: None,
+        name: "Yuki".to_string(),
+        created_at: Utc::now(),
+        updated_at: None,
     };
 
     let res: Test = db
@@ -40,5 +38,5 @@ pub async fn hc_db(State(state): State<Arc<AppState>>) -> Result<impl IntoRespon
 
     println!("res: {:?}", res);
 
-    Ok((StatusCode::CREATED, "OK").into_response())
+    Ok((StatusCode::CREATED, Json(res)).into_response())
 }
