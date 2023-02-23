@@ -6,7 +6,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 pub async fn create_route(project_id: &str) -> Router {
     let db = initialize_db(project_id.to_string()).await;
-    let app_state = Arc::new(AppState { db });
+    let app_state = Arc::new(AppState::new(db));
 
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
