@@ -1,6 +1,6 @@
+use crate::app_error::AppError;
 use crate::app_state::AppState;
 use crate::entity::test::Test;
-use crate::utility::app_error::AppError;
 use axum::{
     extract::{Query, State},
     response::IntoResponse,

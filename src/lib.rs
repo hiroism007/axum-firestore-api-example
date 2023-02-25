@@ -1,9 +1,9 @@
+mod app_error;
 mod app_state;
 mod controller;
 mod database;
 mod entity;
 mod route;
-mod utility;
 
 use dotenv::dotenv;
 use route::create_route;

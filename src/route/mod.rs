@@ -12,11 +12,13 @@ pub async fn create_route(project_id: &str) -> Router {
         .allow_methods([Method::GET, Method::POST])
         .allow_origin(Any);
 
+    let hc_router = Router::new()
+        .route("/", get(health_check::hc_server))
+        .route("/r", get(health_check::hc_db_r))
+        .route("/w", get(health_check::hc_db_w));
+
     Router::new()
-        .route("/", get(|| async { "Hello, World!" }))
-        .route("/hc", get(health_check::hc_server))
-        .route("/hc_db_r", get(health_check::hc_db_r))
-        .route("/hc_db_w", get(health_check::hc_db_w))
+        .nest("/hc", hc_router)
         .layer(cors)
         .with_state(app_state)
 }
