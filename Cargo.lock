@@ -310,6 +310,7 @@ dependencies = [
 name = "firebase-auth-api"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum",
  "chrono",
  "dotenv",
@@ -317,6 +318,7 @@ dependencies = [
  "hyper",
  "serde",
  "serde_json",
+ "thiserror",
  "tokio",
  "tower",
  "tower-http",

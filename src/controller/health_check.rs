@@ -24,15 +24,12 @@ pub struct TestQuery {
 pub async fn hc_db_r(
     State(state): State<Arc<AppState>>,
     Query(params): Query<TestQuery>,
-) -> Result<impl IntoResponse, AppError> {
+) -> Result<impl IntoResponse, impl IntoResponse> {
     let db = state.db.clone();
 
     let id = params.id;
     if id.is_none() {
-        return Err(AppError::new(
-            StatusCode::BAD_REQUEST,
-            "id is required".to_string(),
-        ));
+        return Err(AppError::InvalidParametersError("id is required".to_string()).into_response());
     }
 
     let res: Option<Test> = db
@@ -42,12 +39,7 @@ pub async fn hc_db_r(
         .obj()
         .one(id.unwrap())
         .await
-        .map_err(|err| {
-            AppError::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to select test: {:?}", err),
-            )
-        })?;
+        .map_err(|err| AppError::DbError(err).into_response())?;
 
     println!("res: {:?}", res);
 
@@ -64,7 +56,7 @@ pub async fn hc_db_w(State(state): State<Arc<AppState>>) -> Result<impl IntoResp
         updated_at: None,
     };
 
-    let res: Test = db
+    let res: Option<Test> = db
         .fluent()
         .insert()
         .into("tests")
@@ -72,12 +64,7 @@ pub async fn hc_db_w(State(state): State<Arc<AppState>>) -> Result<impl IntoResp
         .object(&test)
         .execute()
         .await
-        .map_err(|err| {
-            AppError::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to insert test: {:?}", err),
-            )
-        })?;
+        .map_err(|err| AppError::DbError(err))?;
 
     println!("res: {:?}", res);
 
