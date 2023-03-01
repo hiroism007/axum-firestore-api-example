@@ -27,8 +27,7 @@ pub async fn hc_db_r(
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     let db = state.db.clone();
 
-    let id = params.id;
-    if id.is_none() {
+    if params.id.is_none() {
         return Err(AppError::InvalidParametersError("id is required".to_string()).into_response());
     }
 
@@ -37,7 +36,7 @@ pub async fn hc_db_r(
         .select()
         .by_id_in("tests")
         .obj()
-        .one(id.unwrap())
+        .one(params.id.unwrap())
         .await
         .map_err(|err| AppError::DbError(err).into_response())?;
 
